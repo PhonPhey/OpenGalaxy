@@ -29,15 +29,15 @@ def gen_name(size):
         return string.capwords(''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(size)))
 
 
-def gen_planets(count):
+def gen_planets(count, coor_upper_bound):
     records_queris = str()
     queris_in_pack = 0
 
     for i in range(0, count, 1):
 
-        x = round(np.random.uniform(-11, 11), 2)
-        y = round(np.random.uniform(-11, 11), 2)
-        z = round(np.random.uniform(-11, 11), 2)
+        x = round(np.random.uniform(-coor_upper_bound, coor_upper_bound), 2)
+        y = round(np.random.uniform(-coor_upper_bound, coor_upper_bound), 2)
+        z = round(np.random.uniform(-coor_upper_bound, coor_upper_bound), 2)
         poz = (x, y, z)
 
         query = int(list(list(SESSION.execute(
@@ -51,10 +51,12 @@ def gen_planets(count):
             while tumbler == 0:
                 print("/|\\")
 
-                x = np.random.uniform(-11, 11)
-                y = np.random.uniform(-11, 11)
-                z = np.random.uniform(-11, 11)
+                x = round(np.random.uniform(-coor_upper_bound, coor_upper_bound), 2)
+                y = round(np.random.uniform(-coor_upper_bound, coor_upper_bound), 2)
+                z = round(np.random.uniform(-coor_upper_bound, coor_upper_bound), 2)
                 poz = (x, y, z)
+
+
 
                 query = int(list(list(SESSION.execute(
                     """SELECT count(*) FROM planets WHERE id='%s'; """ % gen_crc32_hash(poz)))[0])[0])
@@ -62,10 +64,18 @@ def gen_planets(count):
                     tumbler = 1
 
         id = gen.gen_crc32_hash(poz)
+
         name = gen_name(np.random.randint(3, 6))
-        records_queris += "INSERT INTO galaxy_00.planets (id, name, x, y, z) VALUES ('%s', '%s', %s, %s, %s); " % (
+        
+          
+
+        radius = round(np.random.uniform(), 3);
+
+        records_queris += "INSERT INTO galaxy_00.planets (id, name, x, y, z) VALUES ('%s', '%s', %s, %s, %s, %s); " % (
             id, name, poz[0], poz[1], poz[2])
+
         queris_in_pack += 1
+
         if queris_in_pack >= 1000:
             queris_in_pack = 0
             driver.execute_cqlsh(records_queris)
@@ -74,4 +84,5 @@ def gen_planets(count):
         os.system("clear")
         print(i+1)
         print("Queris in pack: %d" % queris_in_pack)
+
     driver.execute_cqlsh(records_queris)

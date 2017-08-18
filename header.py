@@ -1,0 +1,4 @@
+
+### PLANETS
+
+PLANETS_SIZE_TYPES = ()
