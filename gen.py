@@ -71,7 +71,7 @@ def gen_planets(count, coor_upper_bound):
 
         radius = round(np.random.uniform(), 3);
 
-        records_queris += "INSERT INTO galaxy_00.planets (id, name, x, y, z) VALUES ('%s', '%s', %s, %s, %s, %s); " % (
+        records_queris += "INSERT INTO galaxy_00.planets (id, name, x, y, z) VALUES ('%s', '%s', %s, %s, %s); " % (
             id, name, poz[0], poz[1], poz[2])
 
         queris_in_pack += 1
@@ -86,3 +86,7 @@ def gen_planets(count, coor_upper_bound):
         print("Queris in pack: %d" % queris_in_pack)
 
     driver.execute_cqlsh(records_queris)
+
+
+if __name__ == "__main__":
+    gen_planets(100, 10000)
